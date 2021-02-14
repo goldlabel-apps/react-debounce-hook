@@ -1,70 +1,67 @@
-# Getting Started with Create React App
+![Listingslab's SVG](https://raw.githubusercontent.com/listingslab-software/listingslab/develop/plugins/push2talk/public/svg/listingslabText.svg)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## React Debounce Hook
 
-## Available Scripts
+> [React Debounce Hook](https://listingslab.com/react-debounce-hook/)
 
-In the project directory, you can run:
+One wheel we’re really bored of reinventing is the problem of throttling API requests in a text field Input context. Say you have a text field into which a user is typing a search term. To give them live results, you need to hit the API, right? But if you hit it on every keystroke, you are making more requests than you need to.
 
-### `yarn start`
+The solution is called debouncing. At the end of the day, JavaScript has an internal clock and some simple methods called set & clear timeout (), which if properly implemented will give you the control to optimise the number of API calls you’re making
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Why React Hooks? They let us use state and other React features without writing a class. Hooks are backwards-compatible
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+#### useDebounce()
 
-### `yarn test`
+This is a hook called useDebounce. Create a new file with this content and import it into wherever you need to debounce something
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+`debounceHook.jsx`
 
-### `yarn build`
+```javascript
+// eslint-disable-next-line
+import React, { useState, useEffect } from 'react'
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export default function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+  useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value)
+      }, delay)
+      return () => {
+        clearTimeout(handler)
+      }
+    },
+    [value] 
+  )
+  return debouncedValue
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Example Usage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+`[Example.jsx](./src/Example.jsx)`
 
-### `yarn eject`
+```javascript
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+export default function Example() {
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+	const [searchTerm, setSearchTerm] = React.useState( `` )
+	const debouncedSearchTerm = useDebounce( searchTerm, 500 )
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+	React.useEffect(() => {
+		if (debouncedSearchTerm) {
+			// asyncSearchAPICall( debouncedSearchTerm )
+		}
+	}, [ debouncedSearchTerm ] )
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+	return <TextField 
+				value={ searchTerm }
+				id={ `search-term` }
+		        onChange={ (e) => {
+		        	e.preventDefault()
+		        	setSearchTerm( e.target.value )
+		        }}
+		     />
+		
+}
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```

@@ -38,7 +38,7 @@ export default function useDebounce(value, delay) {
 
 ## Example Usage
 
-`./src/Example.jsx`
+[Example.jsx](./src/Example/Example.jsx)
 
 ```javascript
 import React from 'react'

@@ -38,9 +38,11 @@ export default function useDebounce(value, delay) {
 
 ## Example Usage
 
-`[Example.jsx](./src/Example.jsx)`
+`./src/Example.jsx`
 
 ```javascript
+
+
 
 export default function Example() {
 
